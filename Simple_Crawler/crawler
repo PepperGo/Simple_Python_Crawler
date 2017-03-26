@@ -1,0 +1,43 @@
+import requests
+from bs4 import BeautifulSoup
+
+def link_spider(max_pages):
+    page = 0
+    while page <= max_pages:
+        url = 'https://movie.douban.com/top250?start=' + str(page) + '&filter='
+        source_code = requests.get(url)
+        plain_text = source_code.text
+        soup = BeautifulSoup(plain_text)
+        for link in soup.findAll('a', {'class': ''}):
+            href = link.get('href')
+            if "subject" in href:
+                get_single_movie_name(href)
+                print(href)
+        page += 25
+
+
+def get_single_movie_name(item_url):
+    source_code = requests.get(item_url)
+    plain_text = source_code.text
+    soup = BeautifulSoup(plain_text)
+    for movie_name in soup.findAll('span', {'property': 'v:itemreviewed'}):
+        print(movie_name.string)
+
+link_spider(25)
+
+
+'''
+def move_name_spider(max_pages):
+    page = 0
+    while page <= max_pages:
+        url = 'https://movie.douban.com/top250?start=' + str(page) + '&filter='
+        source_code = requests.get(url)
+        plain_text = source_code.text
+        soup = BeautifulSoup(plain_text)
+        for link in soup.findAll('span', {'class': 'title'}):
+            #   href = link.get('href')
+            title = link.string
+            #    print(href)
+            print(title)
+        page += 25
+'''
